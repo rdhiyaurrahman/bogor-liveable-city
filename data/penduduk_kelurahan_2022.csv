@@ -1,0 +1,86 @@
+# Jumlah penduduk menurut kelurahan, Kota Bogor, 2022 (jiwa)
+# Sumber: Dinas Kependudukan dan Catatan Sipil Kota Bogor, dipublikasikan BPS
+#         Kota Bogor pada tabel "Jumlah Penduduk dan Laju Pertumbuhan Penduduk
+#         menurut Kelurahan di Kecamatan <X>", seluruhnya tahun data 2022 dan
+#         diperbarui serentak 3 Januari 2025.
+# Diambil 23 Oktober 2026 dari bogorkota.bps.go.id, id tabel per kecamatan:
+#   937 Bogor Selatan, 938 Bogor Timur, 939 Bogor Utara,
+#   940 Tanah Sareal, 941 Bogor Barat, 942 Bogor Tengah
+#
+# Menggantikan penduduk_kelurahan_2021.csv. Alasan pindah ke 2022:
+#   1. Satu tahun data untuk keenam kecamatan, satu tanggal pembaruan.
+#   2. Lebih dekat ke tahun penggunaan lahan (2023).
+#   3. Seri 2021 memuat dua salah ketik (Pasirmulya 60.177, total perempuan
+#      Bogor Tengah 53.890) dan label 11 kelurahan Tanah Sareal tertukar.
+#      Pengecekan silang dengan jumlah RT per kelurahan menunjukkan rasio
+#      penduduk per RT versi 2022 wajar (272-429) sedangkan versi 2021 tidak
+#      (140-608), sehingga penamaan versi 2022 yang dipakai.
+kecamatan,kelurahan_bps,penduduk
+Bogor Barat,Pasirmulya,6126
+Bogor Barat,Pasirkuda,16798
+Bogor Barat,Pasirjaya,22454
+Bogor Barat,Gunungbatu,21970
+Bogor Barat,Loji,16507
+Bogor Barat,Menteng,17949
+Bogor Barat,Cilendek Timur,19087
+Bogor Barat,Cilendek Barat,20495
+Bogor Barat,Sindangbarang,20144
+Bogor Barat,Margajaya,7038
+Bogor Barat,Balungbangjaya,13228
+Bogor Barat,Situgede,12174
+Bogor Barat,Bubulak,18078
+Bogor Barat,Semplak,13130
+Bogor Barat,Curugmekar,13708
+Bogor Barat,Curug,13547
+Bogor Selatan,Mulyaharja,24278
+Bogor Selatan,Pamoyanan,17637
+Bogor Selatan,Ranggamekar,16541
+Bogor Selatan,Genteng,9938
+Bogor Selatan,Kertamaya,7260
+Bogor Selatan,Rancamaya,8108
+Bogor Selatan,Bojongkerta,11398
+Bogor Selatan,Harjasari,14270
+Bogor Selatan,Muarasari,11837
+Bogor Selatan,Pakuan,5509
+Bogor Selatan,Cipaku,14426
+Bogor Selatan,Lawanggintung,8812
+Bogor Selatan,Batutulis,10654
+Bogor Selatan,Bondongan,15067
+Bogor Selatan,Empang,18404
+Bogor Selatan,Cikaret,22362
+Bogor Tengah,Paledang,12579
+Bogor Tengah,Gudang,8141
+Bogor Tengah,Babakan Pasar,11717
+Bogor Tengah,Tegallega,19270
+Bogor Tengah,Babakan,8119
+Bogor Tengah,Sempur,8840
+Bogor Tengah,Pabaton,3225
+Bogor Tengah,Cibogor,8167
+Bogor Tengah,Panaragan,8152
+Bogor Tengah,Kebon Kelapa,12486
+Bogor Tengah,Ciwaringin,8635
+Bogor Utara,Batarjati,26224
+Bogor Utara,Tegal Gundil,30129
+Bogor Utara,Tanah Baru,28406
+Bogor Utara,Cimahpar,25630
+Bogor Utara,Ciluar,16927
+Bogor Utara,Cibuluh,21168
+Bogor Utara,Kedunghalang,24256
+Bogor Utara,Ciparigi,27460
+Bogor Timur,Sindangsari,10772
+Bogor Timur,Sindangrasa,16310
+Bogor Timur,Tajur,7262
+Bogor Timur,Katulampa,32374
+Bogor Timur,Baranangsiang,28440
+Bogor Timur,Sukasari,13054
+Tanah Sareal,Kedungwaringin,24183
+Tanah Sareal,Kedungjaya,13475
+Tanah Sareal,Kebonpedes,25275
+Tanah Sareal,Tanahsareal,10122
+Tanah Sareal,Kedungbadak,30777
+Tanah Sareal,Sukaresmi,15459
+Tanah Sareal,Sukadamai,18089
+Tanah Sareal,Cibadak,27707
+Tanah Sareal,Kayumanis,16202
+Tanah Sareal,Mekarwangi,23754
+Tanah Sareal,Kencana,22298

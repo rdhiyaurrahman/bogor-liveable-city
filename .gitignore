@@ -1,0 +1,27 @@
+# Node
+node_modules/
+.next/
+out/
+dist/
+npm-debug.log*
+
+# Lingkungan
+.env
+.env.local
+*.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Dataset mentah: ratusan MB, disimpan di luar repo.
+# Daftarnya ada di data/DATASET.md
+dataset/
+*.shp
+*.shx
+*.dbf
+
+# Sistem
+.DS_Store
+Thumbs.db
