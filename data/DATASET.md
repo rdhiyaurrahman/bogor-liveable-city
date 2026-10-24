@@ -18,9 +18,10 @@ DOI [10.14710/pwk.v21i3.67908](https://doi.org/10.14710/pwk.v21i3.67908).
 | 7 | `POLARUANG_KOTABOGOR_2021_AR.csv` | 124,5 MB | 2021 | Layer kesesuaian ruang (8.901 poligon peruntukan perumahan) dan RTH rencana | RTRW Kota Bogor 2021–2041 |
 | 8 | `PEMUKIMAN_AR_25K.csv` | 1,5 MB | — | Layer kesesuaian ruang, 597 poligon permukiman | Geoportal / Ina-Geoportal |
 | 9 | `penduduk_kelurahan_2022.csv` | 2 KB | 2022 | Dimensi sosial kependudukan, dan penyebut semua indikator per kapita | BPS Kota Bogor (lihat di bawah) |
+| 10 | `osm/jalan_osm_bogor.geojson` | 7,4 MB | 2026 | Jaringan jalan untuk menghitung jarak tempuh ke fasilitas kesehatan, 21.276 ruas | OpenStreetMap via Overpass API (lihat di bawah) |
 
-Berkas 1–8 ada di folder `dataset/` milik kelompok. Berkas 9 dikumpulkan sendiri
-dan disimpan di repositori ini.
+Berkas 1–8 ada di folder `dataset/` milik kelompok. Berkas 9 dan 10 dikumpulkan
+sendiri dan disimpan di repositori ini.
 
 ## B. Dataset yang TIDAK dipakai
 
@@ -48,12 +49,83 @@ Penduduk menurut Kelurahan di Kecamatan X"*. Keenam tabel diperbarui serentak
 
 Keenam total itu diuji ulang oleh script dan akan menghentikan proses bila tidak cocok.
 
+## C2. Asal data jaringan jalan (berkas #10)
+
+Sumber: **OpenStreetMap**, diambil melalui **Overpass API** pada 24 Oktober 2026.
+Cap waktu basis data OSM yang terbaca pada respons: `2026-10-24T10:28:36Z`.
+Lisensi: **Open Database License (ODbL)**, wajib dicantumkan atribusi
+"© OpenStreetMap contributors" pada setiap peta yang memakainya.
+
+Data ini bukan hasil mengunduh berkas jadi dari suatu portal. Data diminta ke
+server Overpass dengan query berikut, lalu hasilnya dipotong pada batas
+administrasi Kota Bogor:
+
+```
+[out:json][timeout:600];
+way["highway"](-6.70,106.72,-6.50,106.86);
+out geom;
+```
+
+Kotak koordinat itu adalah batas wilayah Kota Bogor ditambah margin, diturunkan
+dari berkas #1. Perintah pengambilannya:
+
+```bash
+curl -A "BogorLiveableCity/1.0 (academic GIS project)" \
+     --data-urlencode "data@query.txt" \
+     -o osm_jalan_bogor.json https://overpass-api.de/api/interpreter
+```
+
+Hasil mentahnya 42.502 ruas berukuran 32,4 MB, mencakup wilayah lebih luas dari
+Kota Bogor. Setelah dipotong pada batas administrasi tersisa **21.276 ruas**
+yang disimpan sebagai `osm/jalan_osm_bogor.geojson` (EPSG:4326, urutan
+bujur-lintang). Atribut yang dipertahankan: `osm_id`, `highway`, `name`,
+`oneway`.
+
+Komposisi jenis jalan pada data mentah:
+
+| `highway=` | Jumlah ruas | Keterangan |
+|---|---|---|
+| residential | 20.628 | jalan permukiman |
+| living_street | 9.611 | gang |
+| service | 7.078 | jalan akses |
+| path | 1.352 | jalan setapak |
+| footway | 916 | trotoar / pejalan kaki |
+| track | 493 | jalan tanah |
+| unclassified | 473 | jalan lokal |
+| tertiary | 451 | kolektor sekunder |
+| primary | 325 | arteri primer |
+| trunk | 298 | jalan nasional |
+| secondary | 157 | kolektor primer |
+| motorway | 148 | jalan tol |
+
+Catatan: nama Kota Bogor di OSM terdaftar sebagai **"Bogor"** pada
+`admin_level=5`, bukan "Kota Bogor". Query yang memakai nama "Kota Bogor" akan
+mengembalikan hasil kosong.
+
+### Graf jaringan yang terbentuk
+
+| | |
+|---|---|
+| Ruas dipakai | 41.859 |
+| Simpul | 286.259 |
+| Sisi | 300.592 |
+| Komponen tersambung terbesar | 283.236 simpul (98,9%) |
+
+Perbandingan jarak lurus dan jarak tempuh melalui jalan, diukur dari titik pusat
+tiap kelurahan ke fasilitas terdekat:
+
+| | Jarak lurus (median) | Jarak jaringan (median) | Rasio |
+|---|---|---|---|
+| Puskesmas | 920 m | 1.273 m | 1,36× |
+| Rumah sakit | 955 m | 1.480 m | 1,44× |
+
 ## D. Keluaran olahan
 
 | Berkas | Isi |
 |---|---|
 | `output/indikator_kelayakhunian_kelurahan.csv` | 68 baris: 12 indikator mentah, 12 ternormalisasi (`n_`), 6 skor dimensi (`dim_`), indeks, skor100, kelas, rank |
 | `output/kelurahan_kelayakhunian.geojson` | 68 poligon WGS84 (EPSG:4326) berisi seluruh atribut di atas |
+| `output/peta_jaringan_jalan.png` | Pratinjau jaringan jalan, batas kelurahan, dan titik fasilitas kesehatan |
 
 ## E. Catatan teknis yang wajib dibaca sebelum mengolah ulang
 

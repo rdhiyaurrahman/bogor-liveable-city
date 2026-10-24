@@ -18,6 +18,10 @@ __pycache__/
 # Dataset mentah: ratusan MB, disimpan di luar repo.
 # Daftarnya ada di data/DATASET.md
 dataset/
+
+# Unduhan mentah Overpass (32 MB). Query untuk mengunduh ulang ada di
+# data/DATASET.md; versi terpotongnya disimpan sebagai .geojson
+data/osm/*.json
 *.shp
 *.shx
 *.dbf
