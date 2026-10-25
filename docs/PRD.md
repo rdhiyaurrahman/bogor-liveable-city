@@ -4,7 +4,7 @@
 
 | Keterangan | Isi |
 |---|---|
-| Versi | 2.0 |
+| Versi | 2.1 |
 | Tanggal | 25 Oktober 2026 |
 | Kelompok | Kelompok 3 |
 | Project Sponsor | Dr. Sofiyanti Indriasari, S.Kom., M.Kom. |
@@ -31,6 +31,16 @@
 | Aksesibilitas faskes | buffer lingkaran | jarak tempuh melalui jaringan jalan |
 | Tech stack | belum ditetapkan | PostgreSQL + PostGIS, Express, Next.js, Leaflet |
 
+### Perubahan dari versi 2.0
+
+| Hal | Versi 2.0 | Versi 2.1 |
+|---|---|---|
+| Peran pengguna | hanya satu peran, tanpa autentikasi | ditambah peran Admin dengan autentikasi |
+| Pengelolaan data | hanya lewat script, sekali jalan | ditambah dashboard admin untuk menambah dan memperbarui data |
+| Antarmuka tanya jawab | belum ada | ditambah asisten AI berlingkup Kota Bogor pada sisi pengguna |
+| Functional requirements | FR-01 sampai FR-31 | FR-01 sampai FR-45 |
+| Non functional requirements | NFR-01 sampai NFR-09 | NFR-01 sampai NFR-14 |
+
 ---
 
 ## 1. Product Overview
@@ -49,6 +59,15 @@ menyajikan agregat pada tingkat kecamatan.
 Penilaian kelayakhunian mencakup enam dimensi: kesehatan, pendidikan, sosial
 kependudukan, lingkungan, transportasi, dan ekonomi. Analisis kesesuaian
 pemanfaatan ruang disajikan sebagai layer tersendiri di luar indeks.
+
+Sistem memiliki dua peran pengguna. **Pengguna umum** mengakses peta, analisis,
+dan asisten AI tanpa perlu masuk ke sistem. **Admin** masuk melalui autentikasi
+dan memperoleh dashboard untuk menambah serta memperbarui data indikator, lalu
+menghitung ulang indeks setelah data berubah.
+
+Pada sisi pengguna tersedia **asisten AI** yang menjawab pertanyaan seputar
+kelayakhunian Kota Bogor. Asisten menjawab berdasarkan data yang tersimpan di
+sistem, dan menolak pertanyaan di luar lingkup Kota Bogor.
 
 ## 2. Background
 
@@ -104,6 +123,10 @@ dipertanggungjawabkan secara akademik.
 - Menampilkan peringkat kelayakhunian wilayah.
 - Mengidentifikasi wilayah yang membutuhkan perhatian berdasarkan hasil analisis.
 - Menyediakan analisis sensitivitas terhadap bobot indikator.
+- Menyediakan dashboard admin untuk memperbarui data tanpa menyentuh berkas
+  mentah atau menjalankan script secara manual.
+- Menyediakan asisten AI yang menjawab pertanyaan pengguna berdasarkan data
+  kelayakhunian Kota Bogor yang tersimpan di sistem.
 
 ## 5. Target Users
 
@@ -113,6 +136,10 @@ dipertanggungjawabkan secara akademik.
 | Akademisi | Mengeksplorasi dan menganalisis data spasial |
 | Masyarakat umum | Memahami kondisi kelayakhunian suatu wilayah |
 | Pengguna analisis | Membandingkan wilayah dan melihat indikator secara lebih detail |
+| Admin | Menambah dan memperbarui data indikator, serta menghitung ulang indeks setelah data berubah |
+
+Pengguna umum tidak perlu masuk ke sistem. Admin wajib masuk melalui
+autentikasi, dan seluruh kemampuan mengubah data hanya tersedia bagi peran ini.
 
 ## 6. Metodologi Penilaian
 
@@ -278,6 +305,28 @@ Pengguna dapat mencari kecamatan atau kelurahan, memilih poligon pada peta,
 kemudian memperoleh informasi skor, klasifikasi, peringkat, nilai tiap indikator,
 sebaran fasilitas kesehatan, serta kesesuaian pemanfaatan ruang.
 
+Selain alur di atas, pengguna dapat bertanya kepada asisten AI kapan saja,
+misalnya menanyakan kelurahan mana yang paling jauh dari rumah sakit atau apa
+arti kelas "Cukup Layak Huni".
+
+### 8.1 Alur Admin
+
+```
+Masuk ke Sistem
+      ↓
+Melihat Dashboard Admin
+      ↓
+Memilih Data yang Akan Diubah
+      ↓
+Menambah atau Memperbarui Nilai Indikator
+      ↓
+Menyimpan Perubahan
+      ↓
+Menjalankan Perhitungan Ulang Indeks
+      ↓
+Meninjau Hasil pada Peta
+```
+
 ## 9. Product Scope
 
 ### 9.1 In Scope
@@ -299,6 +348,11 @@ sebaran fasilitas kesehatan, serta kesesuaian pemanfaatan ruang.
 - Simulasi bobot indikator sebagai analisis sensitivitas
 - Ekspor data peringkat
 - Visualisasi hasil analisis pada peta
+- Autentikasi dan pembatasan akses berdasarkan peran
+- Dashboard admin untuk menambah dan memperbarui data indikator
+- Perhitungan ulang indeks dari dashboard admin
+- Riwayat perubahan data
+- Asisten AI berlingkup Kota Bogor pada sisi pengguna
 
 ### 9.2 Out of Scope
 
@@ -310,6 +364,10 @@ sebaran fasilitas kesehatan, serta kesesuaian pemanfaatan ruang.
 - Pengadaan infrastruktur fisik
 - Pengambilan keputusan kebijakan secara otomatis
 - Analisis rute perjalanan untuk pengguna akhir
+- Pendaftaran mandiri pengguna umum, karena akun hanya dibuat untuk admin
+- Asisten AI yang menjawab topik di luar Kota Bogor
+- Asisten AI yang mengubah data atau menjalankan perintah pada sistem
+- Pengunggahan berkas spasial mentah melalui dashboard admin
 
 ## 10. Functional Requirements
 
@@ -364,6 +422,30 @@ sebaran fasilitas kesehatan, serta kesesuaian pemanfaatan ruang.
 | FR-30 | Pengguna dapat mengekspor data peringkat wilayah | Pengguna | Rendah |
 | FR-31 | Pengguna dapat melihat sumber data dan tahun data setiap indikator | Pengguna | Rendah |
 
+### 10.5 Manajemen data oleh admin
+
+| ID | Requirement | Aktor | Prioritas |
+|---|---|---|---|
+| FR-32 | Admin dapat masuk ke sistem menggunakan akun yang telah disediakan | Admin | Tinggi |
+| FR-33 | Admin dapat keluar dari sistem | Admin | Tinggi |
+| FR-34 | Admin dapat melihat dashboard berisi ringkasan jumlah wilayah, indikator, dan waktu pembaruan terakhir | Admin | Tinggi |
+| FR-35 | Admin dapat melihat daftar seluruh nilai indikator untuk 68 kelurahan dalam bentuk tabel | Admin | Tinggi |
+| FR-36 | Admin dapat memperbarui nilai indikator pada suatu kelurahan | Admin | Tinggi |
+| FR-37 | Admin dapat menambah data indikator untuk periode atau tahun data baru | Admin | Tinggi |
+| FR-38 | Sistem harus memvalidasi masukan admin sebelum disimpan, mencakup tipe data, rentang nilai, dan kelengkapan 68 kelurahan | Admin | Tinggi |
+| FR-39 | Admin dapat menjalankan perhitungan ulang indeks setelah data diubah | Admin | Tinggi |
+| FR-40 | Admin dapat melihat riwayat perubahan data beserta waktu dan pelakunya | Admin | Sedang |
+
+### 10.6 Asisten AI
+
+| ID | Requirement | Aktor | Prioritas |
+|---|---|---|---|
+| FR-41 | Pengguna dapat mengajukan pertanyaan melalui antarmuka percakapan | Pengguna | Tinggi |
+| FR-42 | Asisten menjawab berdasarkan data kelayakhunian yang tersimpan di sistem | Pengguna | Tinggi |
+| FR-43 | Asisten menolak dengan sopan pertanyaan di luar lingkup kelayakhunian Kota Bogor | Pengguna | Tinggi |
+| FR-44 | Jawaban asisten menyebutkan nama wilayah, indikator, dan nilai yang menjadi dasar jawabannya | Pengguna | Sedang |
+| FR-45 | Pengguna dapat melihat contoh pertanyaan yang dapat dijawab asisten | Pengguna | Rendah |
+
 ## 11. Non Functional Requirements
 
 | ID | Requirement |
@@ -377,6 +459,11 @@ sebaran fasilitas kesehatan, serta kesesuaian pemanfaatan ruang.
 | NFR-07 | Peta harus tetap responsif saat menampilkan 68 poligon kelurahan beserta layer jaringan jalan |
 | NFR-08 | Setiap peta yang menampilkan data OpenStreetMap harus mencantumkan atribusi "© OpenStreetMap contributors" sesuai lisensi ODbL |
 | NFR-09 | Perhitungan indeks harus dapat diulang dari data mentah melalui satu perintah |
+| NFR-10 | Kata sandi admin harus disimpan dalam bentuk hash, tidak pernah sebagai teks biasa |
+| NFR-11 | Seluruh endpoint yang mengubah data harus menolak permintaan tanpa sesi admin yang sah |
+| NFR-12 | Setiap perubahan data harus tercatat beserta waktu, pelaku, nilai lama, dan nilai baru |
+| NFR-13 | Asisten AI tidak boleh memiliki akses tulis ke basis data |
+| NFR-14 | Kunci API layanan AI harus disimpan sebagai variabel lingkungan di sisi server dan tidak pernah dikirim ke peramban |
 
 ## 12. Arsitektur Sistem
 
@@ -387,6 +474,8 @@ sebaran fasilitas kesehatan, serta kesesuaian pemanfaatan ruang.
 | Backend | Node.js + Express |
 | Frontend | Next.js |
 | Visualisasi peta | Leaflet.js |
+| Autentikasi | Sesi berbasis token pada Express, kata sandi di-hash |
+| Asisten AI | Layanan model bahasa melalui API, dipanggil dari sisi server |
 
 ### 12.1 Alur data
 
@@ -404,11 +493,24 @@ rentang nilainya, sehingga terbentuk peta choropleth.
 ### 12.2 Endpoint
 
 ```
-GET /api/kelurahan         FeatureCollection seluruh kelurahan
-GET /api/kelurahan/:kode   satu kelurahan untuk panel detail
-GET /api/kecamatan         agregat tertimbang penduduk per kecamatan
-GET /api/jalan             layer jaringan jalan
+GET    /api/kelurahan         FeatureCollection seluruh kelurahan
+GET    /api/kelurahan/:kode   satu kelurahan untuk panel detail
+GET    /api/kecamatan         agregat tertimbang penduduk per kecamatan
+GET    /api/jalan             layer jaringan jalan
+
+POST   /api/auth/login        masuk sebagai admin
+POST   /api/auth/logout       keluar
+GET    /api/admin/indikator   daftar nilai indikator untuk disunting
+PUT    /api/admin/indikator/:kode   memperbarui nilai indikator satu kelurahan
+POST   /api/admin/periode     menambah periode data baru
+POST   /api/admin/hitung      menjalankan perhitungan ulang indeks
+GET    /api/admin/riwayat     riwayat perubahan data
+
+POST   /api/asisten           pertanyaan pengguna ke asisten AI
 ```
+
+Seluruh endpoint berawalan `/api/admin` dan `/api/auth/logout` memerlukan sesi
+admin yang sah.
 
 ### 12.3 Catatan implementasi
 
@@ -420,7 +522,71 @@ PostGIS.
 Leaflet mengakses objek `window`, sehingga komponen peta pada Next.js harus
 dimuat tanpa render sisi server.
 
-## 13. Keterbatasan
+## 13. Rancangan Manajemen Data dan Asisten AI
+
+### 13.1 Konsekuensi perubahan data terhadap indeks
+
+Normalisasi min-max menghitung nilai setiap kelurahan **relatif terhadap nilai
+terendah dan tertinggi di antara 68 kelurahan**. Karena itu, mengubah nilai satu
+kelurahan saja dapat mengubah skor seluruh kelurahan, terutama bila nilai yang
+diubah menjadi nilai terendah atau tertinggi yang baru.
+
+Dashboard admin karena itu tidak boleh menulis langsung ke kolom skor. Alurnya:
+
+1. Admin mengubah **nilai mentah** indikator, bukan skor atau kelas.
+2. Sistem menyimpan nilai mentah beserta riwayat perubahannya.
+3. Admin menjalankan perhitungan ulang (FR-39).
+4. Sistem menormalisasi ulang seluruh 68 kelurahan, menghitung skor dimensi,
+   indeks, kelas, dan peringkat, lalu menyimpannya menggantikan hasil lama.
+
+Skor dan kelas diperlakukan sebagai hasil turunan yang hanya boleh dihasilkan
+oleh proses perhitungan, tidak pernah disunting manual.
+
+### 13.2 Lingkup dan pembatasan asisten AI
+
+Asisten AI dibatasi pada topik kelayakhunian Kota Bogor. Pembatasan dilakukan
+pada tiga lapis:
+
+| Lapis | Mekanisme |
+|---|---|
+| Instruksi sistem | Model diberi instruksi untuk hanya menjawab seputar data kelayakhunian Kota Bogor dan menolak topik lain |
+| Data | Model hanya diberi potongan data yang relevan dari basis data sistem, bukan akses bebas |
+| Hak akses | Asisten memanggil basis data hanya untuk membaca, tanpa kemampuan menulis (NFR-13) |
+
+Asisten menjawab dengan merujuk nilai yang ada di basis data, bukan dari ingatan
+model. Pola yang dipakai adalah mengambil data yang relevan terlebih dahulu,
+kemudian meminta model menyusun jawabannya dari data tersebut. Pendekatan ini
+dipilih karena model bahasa cenderung mengarang angka bila diminta menjawab
+tanpa data pendukung.
+
+Contoh pertanyaan yang dapat dijawab:
+
+- Kelurahan mana yang paling jauh dari rumah sakit?
+- Apa arti kelas "Cukup Layak Huni"?
+- Bandingkan Kelurahan Bantarjati dengan Kelurahan Pasir Mulya.
+- Kecamatan mana yang skor dimensi lingkungannya tertinggi?
+- Indikator apa saja yang membentuk dimensi kesehatan?
+
+Pertanyaan di luar lingkup, misalnya mengenai kota lain atau topik yang tidak
+berhubungan dengan kelayakhunian, dijawab dengan penolakan yang menjelaskan
+lingkup asisten.
+
+### 13.3 Prioritas pengerjaan
+
+Penambahan peran admin dan asisten AI memperluas lingkup pekerjaan di saat
+tahap basis data, backend, dan frontend belum dimulai, sedangkan tenggat proyek
+16 November 2026. Karena itu pengerjaan dibagi dua tingkat:
+
+| Tingkat | Cakupan |
+|---|---|
+| Wajib | Peta, indeks, dimensi, peringkat, perbandingan, filter, dan pencarian (FR-01 sampai FR-31) |
+| Lanjutan | Autentikasi dan dashboard admin (FR-32 sampai FR-40), asisten AI (FR-41 sampai FR-45) |
+
+Tingkat lanjutan dikerjakan setelah tingkat wajib berjalan. Bila waktu tidak
+mencukupi, FR-40 dan FR-45 adalah yang pertama digugurkan karena berprioritas
+paling rendah.
+
+## 14. Keterbatasan
 
 1. Jurnal rujukan memakai 15 indikator, sistem ini memakai 10 indikator pada
    enam dimensi yang sama. Indikator jumlah murid, jumlah guru, rasio
@@ -447,8 +613,15 @@ dimuat tanpa render sisi server.
 8. Dimensi lingkungan berkorelasi negatif terhadap indeks, karena wilayah hijau
    di Kota Bogor cenderung berada di pinggiran yang minim layanan. Kondisi ini
    merupakan temuan, bukan kesalahan perhitungan.
+9. Asisten AI bergantung pada layanan model bahasa pihak ketiga, sehingga
+   jawabannya tidak sepenuhnya dapat diprediksi dan pemanggilannya memerlukan
+   koneksi internet serta kunci API. Jawaban asisten bersifat membantu
+   penelusuran data, bukan sumber rujukan akademik.
+10. Akun admin dibuat secara manual oleh pengembang. Sistem tidak menyediakan
+    pendaftaran mandiri, pemulihan kata sandi, maupun pengelolaan banyak tingkat
+    hak akses.
 
-## 14. Status Pengerjaan
+## 15. Status Pengerjaan
 
 | Tahap | Status |
 |---|---|
@@ -458,3 +631,5 @@ dimuat tanpa render sisi server.
 | Backend Express | belum |
 | Frontend Next.js | belum |
 | Integrasi jarak jaringan ke dimensi kesehatan | belum |
+| Autentikasi dan dashboard admin | belum |
+| Asisten AI | belum |
