@@ -26,6 +26,9 @@ data/osm/*.json
 *.shx
 *.dbf
 
+# HTML perantara hasil md_ke_pdf.py, yang disimpan cuma PDF-nya
+output/*.html
+
 # Sistem
 .DS_Store
 Thumbs.db

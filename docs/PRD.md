@@ -2,7 +2,7 @@
 
 **Bogor Liveable City: Sistem Informasi Geografis Analisis Kelayakhunian Wilayah Kota Bogor**
 
-| | |
+| Keterangan | Isi |
 |---|---|
 | Versi | 2.0 |
 | Tanggal | 25 Oktober 2026 |
